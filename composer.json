@@ -1,0 +1,29 @@
+{
+    "name": "rakibul/userlog",
+    "description": "A package to track user activities",
+    "type": "package",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "Rakibul\\Userlog\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Rakibul Hasan",
+            "email": "rakibulhasan@notionhive.com"
+        }
+    ],
+    "require": {
+        "php": "^7.3|^8.0",
+        "illuminate/support": "^8.0|^9.0|^10.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Rakibul\\Userlog\\UserActivityServiceProvider"
+            ]
+        }
+    }
+}
