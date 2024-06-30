@@ -32,6 +32,7 @@ class UserActivityServiceProvider extends ServiceProvider
         // Middleware...
         // Register the middleware
         $files->copyDirectory(__DIR__ . '/Http/Middleware', app_path('Http/Middleware'));
+        $files->copyDirectory(__DIR__ . '/database/migrations', app_path('database/migrations'));
         $this->app['router']->pushMiddlewareToGroup('auth', \Rakibul\Userlog\Http\Middleware\ActivityLoggerMiddleware::class);
     }
 
