@@ -29,11 +29,28 @@ class UserActivityServiceProvider extends ServiceProvider
             __DIR__ . '/config/activitylogger.php' => config_path('activitylogger.php'),
         ]);
 
-        // Middleware...
-        // Register the middleware
-        $files->copyDirectory(__DIR__ . '/Http/Middleware', app_path('Http/Middleware'));
-        $files->copyDirectory(__DIR__ . '/database/migrations', app_path('database/migrations'));
+
+        $this->loadRoutesFrom(__DIR__ . '/routes/web.php');
+
+
+        $this->loadViewsFrom(__DIR__ . '/resources/views', 'index');
+
+
+        $this->publishes([
+            __DIR__ . '/Http/Middleware' => app_path('Http/Middleware'),
+        ], 'middleware');
+
         $this->app['router']->pushMiddlewareToGroup('auth', \Rakibul\Userlog\Http\Middleware\ActivityLoggerMiddleware::class);
+        
+        $this->app['view']->composer('admin.layouts.sidebar', function ($view) {
+            $view->with('menu', array_merge($view->getData()['menu'] ?? [], [
+                'userActivity' => [
+                    'url' => route('user-activity'),
+                    'label' => 'User Activity',
+                    'icon' => 'fas fa-tasks',
+                ],
+            ]));
+        });
     }
 
     /**

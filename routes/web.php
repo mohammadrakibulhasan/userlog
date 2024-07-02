@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/rr', function () {
-    return 'hello';
+Route::middleware('auth')->get('user-activity', function () {
+    return view('user-activity');
 });
+
