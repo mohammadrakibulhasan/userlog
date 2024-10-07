@@ -18,6 +18,7 @@ class CreateActivityLogsTable extends Migration
             $table->ipAddress('ip_address');
             $table->text('user_agent')->nullable();
             $table->json('details')->nullable();
+            $table->string('status')->nullable();
             $table->timestamps();
         });
     }

@@ -4,9 +4,9 @@ namespace Rakibul\Userlog\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Auth;
-use Rakibul\Userlog\Models\ActivityLog;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Database\Eloquent\Model;
+use Rakibul\Userlog\Models\ActivityLog;
 
 class ActivityLoggerMiddleware
 {
@@ -25,6 +25,10 @@ class ActivityLoggerMiddleware
             Event::listen("eloquent.{$event}: *", function ($eventName, array $data) use ($event) {
                 $this->logModelEvent($event, $data[0]);
             });
+
+            Event::listen("eloquent.{$event}.failed: *", function ($eventName, array $data) use ($event) {
+                $this->logModelEvent("{$event}.failed", $data[0]);
+            });
         }
     }
 
@@ -41,6 +45,7 @@ class ActivityLoggerMiddleware
             'user_name' => $user ? $user->name : null,
             'title' => "{$model->getTable()} {$event}",
             'method' => $event,
+            'status' => str_contains($event, 'failed') ? 'failed' : 'success',
             'path' => request()->path(),
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
@@ -53,3 +58,4 @@ class ActivityLoggerMiddleware
         ActivityLog::create($logData);
     }
 }
+
