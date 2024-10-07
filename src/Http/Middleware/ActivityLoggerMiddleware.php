@@ -14,14 +14,13 @@ class ActivityLoggerMiddleware
     public function handle($request, Closure $next)
     {
         $this->registerModelEventListeners();
-        $this->registerValidationErrorListener();
 
         return $next($request);
     }
 
     protected function registerModelEventListeners()
     {
-        $events = ['created', 'updated', 'deleted';
+        $events = ['created', 'updated', 'deleted'];
 
         foreach ($events as $event) {
             Event::listen("eloquent.{$event}: *", function ($eventName, array $data) use ($event) {
@@ -32,31 +31,6 @@ class ActivityLoggerMiddleware
                 $this->logModelEvent("{$event}.failed", $data[0]);
             });
         }
-    }
-
-    protected function registerValidationErrorListener()
-    {
-        app()->error(function (ValidationException $e) {
-            $this->logValidationError($e);
-        });
-    }
-
-    protected function logValidationError(ValidationException $e)
-    {
-        $user = Auth::user();
-        $logData = [
-            'user_id' => $user ? $user->id : null,
-            'user_name' => $user ? $user->name : null,
-            'title' => "{$e->response->originalUrl()} validation error",
-            'method' => $e->response->status(),
-            'status' => 'failed',
-            'path' => $e->response->originalUrl(),
-            'ip_address' => request()->ip(),
-            'user_agent' => request()->userAgent(),
-            'details' => json_encode($e->errors()),
-        ];
-
-        ActivityLog::create($logData);
     }
 
     protected function logModelEvent($event, Model $model)
